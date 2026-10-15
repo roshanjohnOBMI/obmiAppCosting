@@ -139,9 +139,9 @@ tr.detail > td > table.inner th { position: static; background: transparent; }
 
 .toollist { margin: 0 0 12px 22px; border-left: 1px solid var(--border); padding-left: 14px; }
 details.subtool { border-bottom: 1px solid var(--border); }
-details.subtool summary { display: grid; grid-template-columns: 1fr auto 70px 110px; gap: 12px; align-items: center; padding: 8px 0; cursor: pointer; list-style: none; font-size: 13px; }
+details.subtool summary { display: grid; grid-template-columns: 14px 1fr auto 70px 110px; gap: 10px; align-items: center; padding: 8px 0; cursor: pointer; list-style: none; font-size: 13px; }
 details.subtool summary::-webkit-details-marker { display: none; }
-details.subtool summary::before { content: "B8"; color: var(--muted); margin-right: 6px; }
+details.subtool summary::before { content: "B8"; color: var(--muted); }
 details.subtool[open] summary::before { content: "BE"; }
 details.subtool .strong { color: var(--c-gold); text-align: right; }
 .muted { color: var(--muted); font-size: 11px; }
