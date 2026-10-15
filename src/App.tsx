@@ -287,53 +287,34 @@ export default function App() {
 
 
           <div className="panel" style={{ marginBottom: 14 }}>
-            <div className="row-between">
-              <h3>Quality base: what each tool protects</h3>
-              <span className="note" style={{ padding: 0 }}>Judgement ratings 0 to 3, not measurements. Click a cell to change it; click a dimension to rank.</span>
-            </div>
+            <h3>Quality: what each tool protects</h3>
             <div className="tablewrap">
-              <table className="qtable">
+              <table className="simple">
                 <thead>
-                  <tr>
-                    <th>Tool</th>
-                    {QDIMS.map((d, i) => (
-                      <th key={d} className={`num ${qDim === d ? "qsel" : ""}`} title={QDESC[d]} onClick={() => setQDim(qDim === d ? null : d)}>{d}</th>
-                    ))}
-                    <th className="num">Score</th>
-                    <th>Hours / month</th>
-                    <th>Quality failure it prevents</th>
-                  </tr>
+                  <tr><th>Tool</th><th>Quality failure it prevents</th><th>Quality protection</th><th>Strongest on</th><th className="num">Hours / month</th></tr>
                 </thead>
                 <tbody>
-                  {qRows.map((q) => (
-                    <tr key={q.tool}>
-                      <td><span className="dot" style={{ background: SET_COLOR[q.set], marginRight: 6 }} />{q.tool}</td>
-                      {q.scores.map((v, i) => (
-                        <td key={i} className="num">
-                          <button
-                            className={`qcell q${v}`}
-                            aria-label={`${q.tool} ${QDIMS[i]} ${v}`}
-                            onClick={() => setQScores((o) => {
-                              const cur = [...(o[q.tool] ?? q.base)];
-                              cur[i] = (cur[i] + 1) % 4;
-                              return { ...o, [q.tool]: cur };
-                            })}
-                          >{v}</button>
-                        </td>
-                      ))}
-                      <td className="num mono">{fmt((q.scores.reduce((a, b) => a + b, 0) / 15) * 100)}%</td>
-                      <td className="num mono">{hours(q.hours)}</td>
-                      <td className="basis">{q.prevents}</td>
-                    </tr>
-                  ))}
+                  {qRows.map((q) => {
+                    const pct = (q.scores.reduce((a, b) => a + b, 0) / 15) * 100;
+                    const level = pct >= 75 ? "High" : pct >= 50 ? "Medium" : "Basic";
+                    const best = Math.max(...q.scores);
+                    const strong = QDIMS.filter((_, i) => q.scores[i] === best && best > 0).slice(0, 2).join(" and ");
+                    return (
+                      <tr key={q.tool}>
+                        <td><span className="dot" style={{ background: SET_COLOR[q.set], marginRight: 6 }} />{q.tool}</td>
+                        <td className="basis">{q.prevents}</td>
+                        <td><span className={`lvl ${level}`}>{level}</span></td>
+                        <td>{strong}</td>
+                        <td className="num mono">{hours(q.hours)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
               {qRows.length === 0 && <div className="empty">No tools match the current slicers.</div>}
             </div>
-            <div className="legend" style={{ marginTop: 12 }}>
-              {QDIMS.map((d) => (
-                <div key={d}><strong>{d}</strong>: <span style={{ color: "var(--muted)" }}>{QDESC[d]}</span></div>
-              ))}
+            <div className="note" style={{ padding: "8px 0 0" }}>
+              Protection is a judgement across completeness, accuracy, consistency, timeliness and traceability, not a measurement.
             </div>
           </div>
 

@@ -94,3 +94,8 @@ table.simple tr.sum td { font-weight: 600; background: var(--bg); }
 
 table.simple td.basis { color: var(--muted); min-width: 220px; }
 table.simple td:first-child { min-width: 180px; }
+
+.lvl { font-size: 11px; padding: 2px 8px; border-radius: var(--radius); border: 1px solid var(--border); }
+.lvl.High { background: color-mix(in srgb, var(--c-gold) 70%, var(--bg)); color: #15171c; font-weight: 600; }
+.lvl.Medium { background: color-mix(in srgb, var(--c-gold) 30%, var(--bg)); }
+.lvl.Basic { color: var(--muted); }
