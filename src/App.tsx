@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   BANDS, Calc, DIMS, Dim, GENERATED, REFERENCE, ROWS, SET_COLOR, SET_ORDER, compute, fmt, hours, sum,
 } from "./lib";
+import { QDIMS, QDESC, QUALITY } from "./quality";
 import wordmarkLight from "./assets/obmi-wordmark-offwhite.png";
 import wordmarkDark from "./assets/obmi-wordmark-navy.png";
 
@@ -31,6 +32,8 @@ export default function App() {
   const [releasedOnly, setReleasedOnly] = useState(true);
   const [scale, setScale] = useState<number>(() => load("obmi-ts-scale", 1));
   const [overrides, setOverrides] = useState<Record<number, number>>(() => load("obmi-ts-overrides", {}));
+  const [qScores, setQScores] = useState<Record<string, number[]>>(() => load("obmi-ts-quality", {}));
+  const [qDim, setQDim] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({ key: "monthMid", dir: -1 });
 
@@ -40,6 +43,7 @@ export default function App() {
   }, [theme]);
   useEffect(() => save("obmi-ts-scale", scale), [scale]);
   useEffect(() => save("obmi-ts-overrides", overrides), [overrides]);
+  useEffect(() => save("obmi-ts-quality", qScores), [qScores]);
 
   const all = useMemo(() => compute(ROWS, overrides, scale), [overrides, scale]);
 
@@ -129,8 +133,21 @@ export default function App() {
     URL.revokeObjectURL(a.href);
   };
 
+  const qRows = useMemo(() => {
+    const present = new Set(rows.map((r) => r.tool));
+    const hoursByTool = new Map<string, number>();
+    rows.forEach((r) => hoursByTool.set(r.tool, (hoursByTool.get(r.tool) ?? 0) + r.monthMid));
+    const setOf = new Map(all.map((r) => [r.tool, r.set]));
+    const out = QUALITY.filter((q) => present.has(q.tool)).map((q) => ({
+      tool: q.tool, prevents: q.prevents, base: q.scores, scores: (qScores[q.tool] ?? q.scores) as number[],
+      set: setOf.get(q.tool) ?? "", hours: hoursByTool.get(q.tool) ?? 0,
+    }));
+    const di = qDim ? QDIMS.indexOf(qDim as (typeof QDIMS)[number]) : -1;
+    return out.sort((a, b) => (di >= 0 ? b.scores[di] - a.scores[di] : 0) || b.hours - a.hours);
+  }, [rows, all, qScores, qDim]);
+
   const topTen = [...rows].sort((a, b) => b.monthMid - a.monthMid).slice(0, 10);
-  const edited = Object.keys(overrides).length;
+  const edited = Object.keys(overrides).length + Object.keys(qScores).length;
 
   return (
     <div className="app">
@@ -191,7 +208,7 @@ export default function App() {
                 <>
                   {" "}
                   {edited} function{edited > 1 ? "s" : ""} edited.{" "}
-                  <button className="btn" onClick={() => setOverrides({})}>Clear edits</button>
+                  <button className="btn" onClick={() => { setOverrides({}); setQScores({}); }}>Clear edits</button>
                 </>
               )}
             </div>
@@ -235,6 +252,58 @@ export default function App() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+
+
+          <div className="panel" style={{ marginBottom: 14 }}>
+            <div className="row-between">
+              <h3>Quality base: what each tool protects</h3>
+              <span className="note" style={{ padding: 0 }}>Judgement ratings 0 to 3, not measurements. Click a cell to change it; click a dimension to rank.</span>
+            </div>
+            <div className="tablewrap">
+              <table className="qtable">
+                <thead>
+                  <tr>
+                    <th>Tool</th>
+                    {QDIMS.map((d, i) => (
+                      <th key={d} className={`num ${qDim === d ? "qsel" : ""}`} title={QDESC[d]} onClick={() => setQDim(qDim === d ? null : d)}>{d}</th>
+                    ))}
+                    <th className="num">Score</th>
+                    <th>Hours / month</th>
+                    <th>Quality failure it prevents</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {qRows.map((q) => (
+                    <tr key={q.tool}>
+                      <td><span className="dot" style={{ background: SET_COLOR[q.set], marginRight: 6 }} />{q.tool}</td>
+                      {q.scores.map((v, i) => (
+                        <td key={i} className="num">
+                          <button
+                            className={`qcell q${v}`}
+                            aria-label={`${q.tool} ${QDIMS[i]} ${v}`}
+                            onClick={() => setQScores((o) => {
+                              const cur = [...(o[q.tool] ?? q.base)];
+                              cur[i] = (cur[i] + 1) % 4;
+                              return { ...o, [q.tool]: cur };
+                            })}
+                          >{v}</button>
+                        </td>
+                      ))}
+                      <td className="num mono">{fmt((q.scores.reduce((a, b) => a + b, 0) / 15) * 100)}%</td>
+                      <td className="num mono">{hours(q.hours)}</td>
+                      <td className="basis">{q.prevents}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {qRows.length === 0 && <div className="empty">No tools match the current slicers.</div>}
+            </div>
+            <div className="legend" style={{ marginTop: 12 }}>
+              {QDIMS.map((d) => (
+                <div key={d}><strong>{d}</strong>: <span style={{ color: "var(--muted)" }}>{QDESC[d]}</span></div>
+              ))}
             </div>
           </div>
 

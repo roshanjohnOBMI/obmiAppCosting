@@ -76,3 +76,10 @@ td input.edited { border-color: var(--c-gold); }
 .tag { font-size: 10px; border: 1px solid var(--border); padding: 1px 5px; border-radius: var(--radius); color: var(--muted); }
 .empty { padding: 30px; text-align: center; color: var(--muted); }
 footer { color: var(--muted); font-size: 12px; margin-top: 24px; line-height: 1.6; }
+
+.qtable td.num, .qtable th.num { text-align: center; }
+.qtable th.qsel { color: var(--c-gold); }
+.qcell { width: 34px; height: 26px; border-radius: var(--radius); border: 1px solid var(--border); cursor: pointer; background: var(--bg); }
+.qcell.q1 { background: color-mix(in srgb, var(--c-gold) 22%, var(--bg)); }
+.qcell.q2 { background: color-mix(in srgb, var(--c-gold) 50%, var(--bg)); }
+.qcell.q3 { background: color-mix(in srgb, var(--c-gold) 80%, var(--bg)); color: #15171c; font-weight: 600; }
