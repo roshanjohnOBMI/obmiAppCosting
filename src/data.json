@@ -578,7 +578,7 @@
    "toolHigh": 0.01,
    "savedLow": 0.04,
    "savedHigh": 0.095,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 35,
@@ -595,7 +595,7 @@
    "toolHigh": 0.05,
    "savedLow": 0.45,
    "savedHigh": 0.88,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 36,
@@ -612,7 +612,7 @@
    "toolHigh": 0.05,
    "savedLow": 1.45,
    "savedHigh": 2.98,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 37,
@@ -629,7 +629,7 @@
    "toolHigh": 0.2,
    "savedLow": 2.8,
    "savedHigh": 5.9,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 38,
@@ -646,7 +646,7 @@
    "toolHigh": 0.25,
    "savedLow": 2.75,
    "savedHigh": 5.9,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 39,
@@ -663,7 +663,7 @@
    "toolHigh": 0.2,
    "savedLow": 1.3,
    "savedHigh": 2.9,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 40,
@@ -680,7 +680,7 @@
    "toolHigh": 0.2,
    "savedLow": 2.8,
    "savedHigh": 5.9,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 41,
@@ -697,7 +697,7 @@
    "toolHigh": 0.1,
    "savedLow": 1.9,
    "savedHigh": 3.95,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 42,
@@ -714,7 +714,7 @@
    "toolHigh": 0.15,
    "savedLow": 0.85,
    "savedHigh": 1.9,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 43,
@@ -731,7 +731,7 @@
    "toolHigh": 0.05,
    "savedLow": 0.45,
    "savedHigh": 0.97,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 44,
@@ -748,7 +748,7 @@
    "toolHigh": 0.1,
    "savedLow": 0.65,
    "savedHigh": 1.45,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 45,
@@ -765,7 +765,7 @@
    "toolHigh": 0.02,
    "savedLow": 0.48,
    "savedHigh": 0.99,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 46,
@@ -782,7 +782,7 @@
    "toolHigh": 0.2,
    "savedLow": 1.3,
    "savedHigh": 2.9,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 47,
@@ -799,7 +799,7 @@
    "toolHigh": 0.03,
    "savedLow": 0.27,
    "savedHigh": 0.58,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 48,
@@ -816,7 +816,7 @@
    "toolHigh": 0.6,
    "savedLow": 7.4,
    "savedHigh": 19.7,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 49,
@@ -833,7 +833,7 @@
    "toolHigh": 0.1,
    "savedLow": 1.4,
    "savedHigh": 2.95,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 50,
@@ -850,7 +850,7 @@
    "toolHigh": 0.1,
    "savedLow": 1.9,
    "savedHigh": 3.95,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 51,
@@ -867,7 +867,7 @@
    "toolHigh": 0.02,
    "savedLow": 0.28,
    "savedHigh": 0.49,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 52,
@@ -884,7 +884,7 @@
    "toolHigh": 0.1,
    "savedLow": 0.2,
    "savedHigh": 0.45,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 53,
@@ -901,7 +901,7 @@
    "toolHigh": 0.02,
    "savedLow": 0.18,
    "savedHigh": 0.39,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 54,
@@ -935,7 +935,7 @@
    "toolHigh": 0.2,
    "savedLow": 0.8,
    "savedHigh": 1.4,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 56,
@@ -986,7 +986,7 @@
    "toolHigh": 0.25,
    "savedLow": 1.25,
    "savedHigh": 2.35,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 59,
@@ -1003,7 +1003,7 @@
    "toolHigh": 0.2,
    "savedLow": 2.8,
    "savedHigh": 4.4,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 60,
@@ -1020,7 +1020,7 @@
    "toolHigh": 0.15,
    "savedLow": 8.85,
    "savedHigh": 13.4,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 61,
@@ -1037,7 +1037,7 @@
    "toolHigh": 0.2,
    "savedLow": 2.3,
    "savedHigh": 3.4,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 62,
@@ -1139,7 +1139,7 @@
    "toolHigh": 0.3,
    "savedLow": 2.7,
    "savedHigh": 4.85,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 68,
@@ -1156,7 +1156,7 @@
    "toolHigh": 0.4,
    "savedLow": 3.6,
    "savedHigh": 7.8,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 69,
@@ -1173,7 +1173,7 @@
    "toolHigh": 0.4,
    "savedLow": 7.6,
    "savedHigh": 15.8,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 70,
@@ -1190,7 +1190,7 @@
    "toolHigh": 0.3,
    "savedLow": 4.7,
    "savedHigh": 9.85,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 71,
@@ -1207,7 +1207,7 @@
    "toolHigh": 0.15,
    "savedLow": 1.85,
    "savedHigh": 3.9,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 72,
@@ -1224,7 +1224,7 @@
    "toolHigh": 0.2,
    "savedLow": 5.8,
    "savedHigh": 15.9,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 73,
@@ -1241,7 +1241,7 @@
    "toolHigh": 0.15,
    "savedLow": 1.85,
    "savedHigh": 3.9,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 74,
@@ -1258,7 +1258,7 @@
    "toolHigh": 0.3,
    "savedLow": 2.7,
    "savedHigh": 5.85,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 75,
@@ -1275,7 +1275,7 @@
    "toolHigh": 0.3,
    "savedLow": 3.7,
    "savedHigh": 7.85,
-   "uses": 4
+   "uses": 4.33
   },
   {
    "id": 76,
