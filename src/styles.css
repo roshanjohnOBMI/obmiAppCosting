@@ -103,3 +103,5 @@ table.simple td:first-child { min-width: 180px; }
 .stack { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
 table.simple td, table.simple th { vertical-align: top; }
 table.simple th:nth-child(3), table.simple td.basis { min-width: 260px; }
+table.simple th:nth-child(2), table.simple td:nth-child(2) { min-width: 200px; }
+table.simple th:nth-child(1), table.simple td:nth-child(1) { min-width: 130px; }
