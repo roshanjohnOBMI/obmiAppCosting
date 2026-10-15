@@ -132,3 +132,7 @@ tr.detail td { background: var(--bg); padding: 12px 14px; }
 
 .wm-print { display: none; }
 @media print { .wm-screen { display: none; } .wm-print { display: block; height: 26px; } }
+
+tr.toolrow td { padding: 10px 8px; }
+tr.detail > td > table.inner { margin: 4px 0 4px 18px; width: calc(100% - 18px); }
+tr.detail > td > table.inner th { position: static; background: transparent; }

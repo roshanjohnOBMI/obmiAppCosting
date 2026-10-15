@@ -38,6 +38,7 @@ export default function App() {
   const [qScores, setQScores] = useState<Record<string, number[]>>(() => load("obmi-ts-quality", {}));
   const [qDim, setQDim] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<number[]>([]);
+  const [openTools, setOpenTools] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({ key: "monthMid", dir: -1 });
 
@@ -122,6 +123,21 @@ export default function App() {
     });
   }, [rows, sort]);
 
+  const toolGroups = useMemo(() => {
+    const m = new Map<string, { key: string; tool: string; set: string; rows: Calc[]; total: number }>();
+    sorted.forEach((r) => {
+      const k = r.set + "|" + r.tool;
+      const g = m.get(k) ?? { key: k, tool: r.tool, set: r.set, rows: [], total: 0 };
+      g.rows.push(r);
+      g.total += r.monthMid;
+      m.set(k, g);
+    });
+    const arr = [...m.values()];
+    if (sort.key === "tool") arr.sort((a, b) => a.tool.localeCompare(b.tool) * sort.dir);
+    else arr.sort((a, b) => (a.total - b.total) * sort.dir);
+    return arr;
+  }, [sorted, sort]);
+
   const setSortKey = (key: SortKey) =>
     setSort((s) => (s.key === key ? { key, dir: (s.dir * -1) as 1 | -1 } : { key, dir: key === "set" || key === "tool" || key === "fn" || key === "unit" ? 1 : -1 }));
 
@@ -141,12 +157,15 @@ export default function App() {
     document.querySelectorAll("details").forEach((d) => {
       if (!d.open) { d.open = true; opened.push(d); }
     });
+    const prevTools = openTools;
+    setOpenTools(toolGroups.map((g) => g.key));
     const restore = () => {
       opened.forEach((d) => (d.open = false));
+      setOpenTools(prevTools);
       window.removeEventListener("afterprint", restore);
     };
     window.addEventListener("afterprint", restore);
-    window.print();
+    setTimeout(() => window.print(), 150);
   };
 
   const exportCsv = () => {
@@ -352,64 +371,83 @@ export default function App() {
 
           <div className="panel">
             <div className="row-between">
-              <h3>Functions ({fmt(rows.length)})</h3>
-              <span className="note" style={{ padding: 0 }}>Edit "Uses / month" to test a what-if. Click Details for the rest.</span>
+              <h3>Tools ({fmt(toolGroups.length)}) and their functions ({fmt(rows.length)})</h3>
+              <span className="note" style={{ padding: 0 }}>Open a tool to see its functions. Edit "Uses / month" to test a what-if.</span>
             </div>
             <div className="tablewrap">
               <table className="fn">
                 <thead>
                   <tr>
-                    {([
-                      ["tool", "Tool", ""], ["fn", "Function", ""],
-                      ["uses", "Uses / month", "num"], ["monthMid", "Saved (h)", "num"],
-                    ] as [SortKey, string, string][]).map(([k, l, c]) => (
-                      <th key={k} className={c} onClick={() => setSortKey(k)}>
-                        {l}{sort.key === k ? (sort.dir === 1 ? " ▲" : " ▼") : ""}
-                      </th>
-                    ))}
+                    <th onClick={() => setSortKey("tool")}>Tool{sort.key === "tool" ? (sort.dir === 1 ? " ▲" : " ▼") : ""}</th>
+                    <th className="num">Functions</th>
+                    <th className="num" onClick={() => setSortKey("monthMid")}>Saved (h){sort.key !== "tool" ? (sort.dir === 1 ? " ▲" : " ▼") : ""}</th>
                     <th />
                   </tr>
                 </thead>
                 <tbody>
-                  {sorted.map((r) => {
-                    const isOpen = expanded.includes(r.id);
+                  {toolGroups.map((g) => {
+                    const open = openTools.includes(g.key);
                     return [
-                      <tr key={r.id} className={r.released ? "" : "unreleased"}>
-                        <td><span className="dot" style={{ background: SET_COLOR[r.set], marginRight: 6 }} />{r.tool}{!r.released && <> <span className="tag">unreleased</span></>}</td>
-                        <td>{r.fn}</td>
+                      <tr key={g.key} className="toolrow">
+                        <td><span className="dot" style={{ background: SET_COLOR[g.set], marginRight: 6 }} /><strong>{g.tool}</strong> <span className="tag">{g.set}</span></td>
+                        <td className="num mono">{g.rows.length}</td>
+                        <td className="num mono">{hours(g.total)}</td>
                         <td className="num">
-                          <input
-                            type="number" min={0} step={1}
-                            className={overrides[r.id] !== undefined ? "edited" : ""}
-                            value={Number(((overrides[r.id] ?? ROWS.find((x) => x.id === r.id)!.uses) * scale).toFixed(2))}
-                            onChange={(e) => {
-                              const n = Number(e.target.value) / scale;
-                              setOverrides((o) => {
-                                const next = { ...o };
-                                if (Number.isFinite(n) && n >= 0 && Math.abs(n - ROWS.find((x) => x.id === r.id)!.uses) > 1e-9) next[r.id] = n;
-                                else delete next[r.id];
-                                return next;
-                              });
-                            }}
-                          />
-                        </td>
-                        <td className="num mono">{hours(r.monthMid)}</td>
-                        <td className="num">
-                          <button className="btn" aria-expanded={isOpen} onClick={() => setExpanded((e) => (isOpen ? e.filter((x) => x !== r.id) : [...e, r.id]))}>
-                            {isOpen ? "Hide" : "Details"}
+                          <button className="btn" aria-expanded={open} onClick={() => setOpenTools((o) => (open ? o.filter((x) => x !== g.key) : [...o, g.key]))}>
+                            {open ? "Hide functions" : "Show functions"}
                           </button>
                         </td>
                       </tr>,
-                      isOpen && (
-                        <tr key={r.id + "-d"} className="detail">
-                          <td colSpan={5}>
-                            <div className="dgrid">
-                              <div><span className="k">Application</span>{r.set}</div>
-                              <div><span className="k">Unit of use</span>{r.unit}</div>
-                              <div><span className="k">Saved per use</span>{fmt(r.perUseMid, 2)} h</div>
-                              <div><span className="k">Range per month</span>{hours(r.monthLow)} to {hours(r.monthHigh)} h</div>
-                              <div className="wide"><span className="k">What it replaces</span>{r.basis}</div>
-                            </div>
+                      open && (
+                        <tr key={g.key + "-f"} className="detail">
+                          <td colSpan={4}>
+                            <table className="fn inner">
+                              <thead><tr><th>Function</th><th className="num">Uses / month</th><th className="num">Saved (h)</th><th /></tr></thead>
+                              <tbody>
+                                {g.rows.map((r) => {
+                                  const isOpen = expanded.includes(r.id);
+                                  return [
+                                    <tr key={r.id} className={r.released ? "" : "unreleased"}>
+                                      <td>{r.fn}{!r.released && <> <span className="tag">unreleased</span></>}</td>
+                                      <td className="num">
+                                        <input
+                                          type="number" min={0} step={1}
+                                          className={overrides[r.id] !== undefined ? "edited" : ""}
+                                          value={Number(((overrides[r.id] ?? ROWS.find((x) => x.id === r.id)!.uses) * scale).toFixed(2))}
+                                          onChange={(e) => {
+                                            const n = Number(e.target.value) / scale;
+                                            setOverrides((o) => {
+                                              const next = { ...o };
+                                              if (Number.isFinite(n) && n >= 0 && Math.abs(n - ROWS.find((x) => x.id === r.id)!.uses) > 1e-9) next[r.id] = n;
+                                              else delete next[r.id];
+                                              return next;
+                                            });
+                                          }}
+                                        />
+                                      </td>
+                                      <td className="num mono">{hours(r.monthMid)}</td>
+                                      <td className="num">
+                                        <button className="btn" aria-expanded={isOpen} onClick={() => setExpanded((e) => (isOpen ? e.filter((x) => x !== r.id) : [...e, r.id]))}>
+                                          {isOpen ? "Hide" : "Details"}
+                                        </button>
+                                      </td>
+                                    </tr>,
+                                    isOpen && (
+                                      <tr key={r.id + "-d"} className="detail">
+                                        <td colSpan={4}>
+                                          <div className="dgrid">
+                                            <div><span className="k">Unit of use</span>{r.unit}</div>
+                                            <div><span className="k">Saved per use</span>{fmt(r.perUseMid, 2)} h</div>
+                                            <div><span className="k">Range per month</span>{hours(r.monthLow)} to {hours(r.monthHigh)} h</div>
+                                            <div className="wide"><span className="k">What it replaces</span>{r.basis}</div>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    ),
+                                  ];
+                                })}
+                              </tbody>
+                            </table>
                           </td>
                         </tr>
                       ),
