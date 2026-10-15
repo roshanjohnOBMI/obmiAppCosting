@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-15",
- "reference": "About 200 models across 20+ disciplines; a Navisworks federation of 100-115 models per weekly cycle; ~10,000 TIDP/MIDP deliverables per MIDP issue (2-3 working days by hand); 50 add-in users (team size not confirmed); the routine final model health check is run online with the ACC Model Health Check app, so the Revit add-in version carries no monthly uses.",
+ "reference": "About 200 models across 20+ disciplines; a Navisworks federation of 100-115 models per weekly cycle; about 10,000 TIDP/MIDP deliverables validated by hand a month (2-3 working days); 50 add-in users (team size not confirmed). The Revit add-in Model Health Check is for modellers; the ACC Model Health Check is a separate web app for BIM managers.",
  "rows": [
   {
    "id": 1,
@@ -11,13 +11,13 @@
    "unit": "per run",
    "released": true,
    "basis": "Counting elements with a blank Clash Code or Zone, category by category, with schedules and filters.",
-   "manualLow": 0.3,
-   "manualHigh": 0.6,
-   "toolLow": 0.02,
-   "toolHigh": 0.03,
-   "savedLow": 0.27,
-   "savedHigh": 0.58,
-   "uses": 65
+   "manualLow": 0.2,
+   "manualHigh": 0.2,
+   "toolLow": 0.01,
+   "toolHigh": 0.01,
+   "savedLow": 0.19,
+   "savedHigh": 0.19,
+   "uses": 866.7
   },
   {
    "id": 2,
@@ -29,12 +29,12 @@
    "released": true,
    "basis": "Finding which categories the parameter is not bound to, one category at a time, and listing them for the parameter owner.",
    "manualLow": 0.2,
-   "manualHigh": 0.5,
-   "toolLow": 0.02,
-   "toolHigh": 0.05,
-   "savedLow": 0.15,
-   "savedHigh": 0.48,
-   "uses": 20
+   "manualHigh": 0.2,
+   "toolLow": 0.01,
+   "toolHigh": 0.01,
+   "savedLow": 0.19,
+   "savedHigh": 0.19,
+   "uses": 866.7
   },
   {
    "id": 3,
@@ -45,13 +45,13 @@
    "unit": "per batch",
    "released": true,
    "basis": "Selecting elements category by category and typing the value into Properties.",
-   "manualLow": 0.3,
-   "manualHigh": 0.7,
-   "toolLow": 0.03,
-   "toolHigh": 0.05,
-   "savedLow": 0.25,
-   "savedHigh": 0.67,
-   "uses": 65
+   "manualLow": 0.2,
+   "manualHigh": 0.2,
+   "toolLow": 0.01,
+   "toolHigh": 0.01,
+   "savedLow": 0.19,
+   "savedHigh": 0.19,
+   "uses": 866.7
   },
   {
    "id": 4,
@@ -62,13 +62,13 @@
    "unit": "per model",
    "released": true,
    "basis": "Looking up each category's code in the clash matrix and entering it by hand.",
-   "manualLow": 0.5,
-   "manualHigh": 1,
-   "toolLow": 0.05,
-   "toolHigh": 0.1,
-   "savedLow": 0.4,
-   "savedHigh": 0.95,
-   "uses": 45
+   "manualLow": 2,
+   "manualHigh": 2,
+   "toolLow": 0.25,
+   "toolHigh": 0.25,
+   "savedLow": 1.75,
+   "savedHigh": 1.75,
+   "uses": 866.7
   },
   {
    "id": 5,
@@ -81,11 +81,11 @@
    "basis": "Editing values in schedules or exporting by hand and re-keying them.",
    "manualLow": 0.5,
    "manualHigh": 1.5,
-   "toolLow": 0.05,
-   "toolHigh": 0.1,
-   "savedLow": 0.4,
-   "savedHigh": 1.45,
-   "uses": 25
+   "toolLow": 0.25,
+   "toolHigh": 0.25,
+   "savedLow": 0.25,
+   "savedHigh": 1.25,
+   "uses": 216.7
   },
   {
    "id": 6,
@@ -153,7 +153,7 @@
    "toolHigh": 0.03,
    "savedLow": 0.17,
    "savedHigh": 0.38,
-   "uses": 200
+   "uses": 866.7
   },
   {
    "id": 10,
@@ -170,7 +170,7 @@
    "toolHigh": 0.02,
    "savedLow": 0.08,
    "savedHigh": 0.29,
-   "uses": 200
+   "uses": 866.7
   },
   {
    "id": 11,
@@ -187,7 +187,7 @@
    "toolHigh": 0.05,
    "savedLow": 0.25,
    "savedHigh": 0.77,
-   "uses": 120
+   "uses": 866.7
   },
   {
    "id": 12,
@@ -204,7 +204,7 @@
    "toolHigh": 0.05,
    "savedLow": 0.25,
    "savedHigh": 0.67,
-   "uses": 100
+   "uses": 866.7
   },
   {
    "id": 13,
@@ -221,7 +221,7 @@
    "toolHigh": 0.05,
    "savedLow": 0.25,
    "savedHigh": 0.77,
-   "uses": 100
+   "uses": 866.7
   },
   {
    "id": 14,
@@ -238,7 +238,7 @@
    "toolHigh": 0.05,
    "savedLow": 0.25,
    "savedHigh": 0.77,
-   "uses": 60
+   "uses": 866.7
   },
   {
    "id": 15,
@@ -255,7 +255,7 @@
    "toolHigh": 0.08,
    "savedLow": 0.22,
    "savedHigh": 0.77,
-   "uses": 80
+   "uses": 866.7
   },
   {
    "id": 16,
@@ -272,7 +272,7 @@
    "toolHigh": 0.15,
    "savedLow": 0.05,
    "savedHigh": 0.45,
-   "uses": 60
+   "uses": 866.7
   },
   {
    "id": 17,
@@ -289,7 +289,7 @@
    "toolHigh": 0.02,
    "savedLow": 0.18,
    "savedHigh": 0.39,
-   "uses": 200
+   "uses": 866.7
   },
   {
    "id": 18,
@@ -442,7 +442,7 @@
    "toolHigh": 0.02,
    "savedLow": 0.08,
    "savedHigh": 0.19,
-   "uses": 0
+   "uses": 866.7
   },
   {
    "id": 27,
@@ -459,7 +459,7 @@
    "toolHigh": 0.2,
    "savedLow": 0.3,
    "savedHigh": 0.9,
-   "uses": 0
+   "uses": 4.33
   },
   {
    "id": 28,
@@ -476,7 +476,7 @@
    "toolHigh": 0.15,
    "savedLow": 1.05,
    "savedHigh": 1.72,
-   "uses": 0
+   "uses": 866.7
   },
   {
    "id": 29,
@@ -493,7 +493,7 @@
    "toolHigh": 0.1,
    "savedLow": 0.2,
    "savedHigh": 0.55,
-   "uses": 0
+   "uses": 866.7
   },
   {
    "id": 30,
@@ -510,7 +510,7 @@
    "toolHigh": 0.02,
    "savedLow": 0.28,
    "savedHigh": 0.49,
-   "uses": 0
+   "uses": 866.7
   },
   {
    "id": 31,
@@ -527,7 +527,7 @@
    "toolHigh": 0.1,
    "savedLow": 0.4,
    "savedHigh": 0.95,
-   "uses": 0
+   "uses": 866.7
   },
   {
    "id": 32,
@@ -544,7 +544,7 @@
    "toolHigh": 0.1,
    "savedLow": 0.9,
    "savedHigh": 1.95,
-   "uses": 0
+   "uses": 866.7
   },
   {
    "id": 33,
@@ -561,7 +561,7 @@
    "toolHigh": 0.05,
    "savedLow": 0.45,
    "savedHigh": 0.97,
-   "uses": 0
+   "uses": 866.7
   },
   {
    "id": 34,
@@ -977,16 +977,16 @@
    "set": "ACC vs TIDP/MIDP Checker",
    "tool": "ACC vs TIDP/MIDP Checker",
    "fn": "Load the schedule and map the columns",
-   "unit": "per MIDP issue",
+   "unit": "per 1,000 deliverables",
    "released": true,
    "basis": "Preparing the MIDP rows, finding the identifier, format and revision columns, filtering to filled rows across many tabs.",
-   "manualLow": 1.5,
-   "manualHigh": 2.5,
-   "toolLow": 0.15,
-   "toolHigh": 0.25,
-   "savedLow": 1.25,
-   "savedHigh": 2.35,
-   "uses": 4.33
+   "manualLow": 0.15,
+   "manualHigh": 0.25,
+   "toolLow": 0.015,
+   "toolHigh": 0.025,
+   "savedLow": 0.125,
+   "savedHigh": 0.235,
+   "uses": 10
   },
   {
    "id": 59,
@@ -994,16 +994,16 @@
    "set": "ACC vs TIDP/MIDP Checker",
    "tool": "ACC vs TIDP/MIDP Checker",
    "fn": "Build the Files Log",
-   "unit": "per MIDP issue",
+   "unit": "per 1,000 deliverables",
    "released": true,
    "basis": "Exporting or scanning the shared ACC folders of 20+ disciplines into a list, scoped to files that reached Shared.",
-   "manualLow": 3,
-   "manualHigh": 4.5,
-   "toolLow": 0.1,
-   "toolHigh": 0.2,
-   "savedLow": 2.8,
-   "savedHigh": 4.4,
-   "uses": 4.33
+   "manualLow": 0.3,
+   "manualHigh": 0.45,
+   "toolLow": 0.01,
+   "toolHigh": 0.02,
+   "savedLow": 0.28,
+   "savedHigh": 0.44,
+   "uses": 10
   },
   {
    "id": 60,
@@ -1011,16 +1011,16 @@
    "set": "ACC vs TIDP/MIDP Checker",
    "tool": "ACC vs TIDP/MIDP Checker",
    "fn": "Match every deliverable and format",
-   "unit": "per MIDP issue",
+   "unit": "per 1,000 deliverables",
    "released": true,
    "basis": "~10,000 deliverables by hand, including naming drift (extra suffixes, revision tags, casing).",
-   "manualLow": 9,
-   "manualHigh": 13.5,
-   "toolLow": 0.1,
-   "toolHigh": 0.15,
-   "savedLow": 8.85,
-   "savedHigh": 13.4,
-   "uses": 4.33
+   "manualLow": 0.9,
+   "manualHigh": 1.35,
+   "toolLow": 0.01,
+   "toolHigh": 0.015,
+   "savedLow": 0.885,
+   "savedHigh": 1.34,
+   "uses": 10
   },
   {
    "id": 61,
@@ -1028,32 +1028,32 @@
    "set": "ACC vs TIDP/MIDP Checker",
    "tool": "ACC vs TIDP/MIDP Checker",
    "fn": "Compile the QA/QC report",
-   "unit": "per MIDP issue",
+   "unit": "per 1,000 deliverables",
    "released": true,
    "basis": "Listing missing, partial, duplicate and extra files and saving the report back to ACC.",
-   "manualLow": 2.5,
-   "manualHigh": 3.5,
-   "toolLow": 0.1,
-   "toolHigh": 0.2,
-   "savedLow": 2.3,
-   "savedHigh": 3.4,
-   "uses": 4.33
+   "manualLow": 0.25,
+   "manualHigh": 0.35,
+   "toolLow": 0.01,
+   "toolHigh": 0.02,
+   "savedLow": 0.23,
+   "savedHigh": 0.34,
+   "uses": 10
   },
   {
    "id": 62,
    "group": "Web apps",
    "set": "ACC Model Health Check",
    "tool": "ACC Model Health Check",
-   "fn": "Open the model and wait for it to load",
+   "fn": "Open the model",
    "unit": "per model",
    "released": true,
-   "basis": "Open in desktop Revit, sync, wait. The batch app opens models in the cloud.",
+   "basis": "",
    "manualLow": 0.15,
    "manualHigh": 0.2,
-   "toolLow": 0,
-   "toolHigh": 0,
-   "savedLow": 0.15,
-   "savedHigh": 0.2,
+   "toolLow": 0.002,
+   "toolHigh": 0.005,
+   "savedLow": 0.145,
+   "savedHigh": 0.198,
    "uses": 200
   },
   {
@@ -1067,10 +1067,10 @@
    "basis": "Run the QA checklist in Revit and wait for it to finish.",
    "manualLow": 0.25,
    "manualHigh": 0.3,
-   "toolLow": 0,
-   "toolHigh": 0,
-   "savedLow": 0.25,
-   "savedHigh": 0.3,
+   "toolLow": 0.01,
+   "toolHigh": 0.017,
+   "savedLow": 0.233,
+   "savedHigh": 0.29,
    "uses": 200
   },
   {

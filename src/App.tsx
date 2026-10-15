@@ -489,19 +489,19 @@ function SimpleView({ rows, total, fte, bySet }: { rows: Calc[]; total: number; 
                     <span className="mono strong">{hours(tot)} h saved</span>
                   </summary>
                   <table className="simple">
-                    <thead><tr><th>Function</th><th className="num">Uses per month</th><th className="num">manually</th><th className="num">automatically</th><th className="num">Saved (h)</th><th>What it replaces</th></tr></thead>
+                    <thead><tr><th>Function</th><th>What it replaces</th><th className="num">Uses per month</th><th className="num">manually</th><th className="num">automatically</th><th className="num">Saved (h)</th></tr></thead>
                     <tbody>
                       {rs.map((r) => (
                         <tr key={r.id}>
                           <td>{r.fn}</td>
+                          <td className="basis">{r.basis}</td>
                           <td className="num mono">{fmt(r.usesEff, 1)}</td>
                           <td className="num mono">{fmt((r.manualLow + r.manualHigh) / 2, 2)}{unit(r.unit)}</td>
                           <td className="num mono">{fmt((r.toolLow + r.toolHigh) / 2, 2)}{unit(r.unit)}</td>
                           <td className="num mono">{hours(r.monthMid)}</td>
-                          <td className="basis">{r.basis}</td>
                         </tr>
                       ))}
-                      <tr className="sum"><td colSpan={4}>{t}: total</td><td className="num mono">{hours(tot)}</td><td /></tr>
+                      <tr className="sum"><td colSpan={5}>{t}: total</td><td className="num mono">{hours(tot)}</td></tr>
                     </tbody>
                   </table>
                 </details>
