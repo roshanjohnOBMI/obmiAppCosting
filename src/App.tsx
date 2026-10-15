@@ -291,21 +291,17 @@ export default function App() {
             <div className="tablewrap">
               <table className="simple">
                 <thead>
-                  <tr><th>Tool</th><th>Quality failure it prevents</th><th>Quality protection</th><th>Strongest on</th><th className="num">Hours / month</th></tr>
+                  <tr><th>Tool</th><th>Quality failure it prevents</th><th>Quality protection</th></tr>
                 </thead>
                 <tbody>
                   {qRows.map((q) => {
                     const pct = (q.scores.reduce((a, b) => a + b, 0) / 15) * 100;
                     const level = pct >= 75 ? "High" : pct >= 50 ? "Medium" : "Basic";
-                    const best = Math.max(...q.scores);
-                    const strong = QDIMS.filter((_, i) => q.scores[i] === best && best > 0).slice(0, 2).join(" and ");
                     return (
                       <tr key={q.tool}>
                         <td><span className="dot" style={{ background: SET_COLOR[q.set], marginRight: 6 }} />{q.tool}</td>
                         <td className="basis">{q.prevents}</td>
                         <td><span className={`lvl ${level}`}>{level}</span></td>
-                        <td>{strong}</td>
-                        <td className="num mono">{hours(q.hours)}</td>
                       </tr>
                     );
                   })}
@@ -314,22 +310,7 @@ export default function App() {
               {qRows.length === 0 && <div className="empty">No tools match the current slicers.</div>}
             </div>
             <div className="note" style={{ padding: "8px 0 0" }}>
-              Protection is a judgement across completeness, accuracy, consistency, timeliness and traceability, not a measurement.
-            </div>
-          </div>
-
-          <div className="panel" style={{ marginBottom: 14 }}>
-            <h3>Top 10 functions</h3>
-            <div className="bars">
-              {topTen.map((r) => (
-                <div className="bar" key={r.id} style={{ cursor: "default" }} title={r.basis}>
-                  <span className="name">{r.tool}: {r.fn}</span>
-                  <span className="track">
-                    <span className="mid" style={{ width: `${(r.monthMid / (topTen[0]?.monthMid || 1)) * 100}%`, background: SET_COLOR[r.set] }} />
-                  </span>
-                  <span className="val mono">{hours(r.monthMid)}</span>
-                </div>
-              ))}
+              Protection is a judgement, not a measurement.
             </div>
           </div>
 
