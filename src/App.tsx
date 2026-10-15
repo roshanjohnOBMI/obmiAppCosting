@@ -538,37 +538,42 @@ function SimpleView({ rows, total, fte, bySet, levelOf }: { rows: Calc[]; total:
                   <span className="mono">{hours(man)} h by hand</span>
                   <span className="mono strong">{hours(tot)} h saved</span>
                 </summary>
-                <div className="tablewrap">
-                  <table className="simple">
-                    <thead>
-                      <tr><th>Tool</th><th>Function</th><th>What it replaces</th><th className="num">Uses per month</th><th className="num">manually</th><th className="num">automatically</th><th className="num">Saved (h)</th></tr>
-                    </thead>
-                    <tbody>
-                      {tools.map((t) => {
-                        const ts = rs.filter((r) => r.tool === t);
-                        const tt = ts.reduce((a, r) => a + r.monthMid, 0);
-                        const lvl = levelOf(t);
-                        return [
-                          ...ts.map((r) => (
-                            <tr key={r.id} className={r.released ? "" : "unreleased"}>
-                              <td>{r.tool}{!r.released && <> <span className="tag">unreleased</span></>}</td>
-                              <td>{r.fn}</td>
-                              <td className="basis">{r.basis}</td>
-                              <td className="num mono">{fmt(r.usesEff, 1)}</td>
-                              <td className="num mono">{fmt((r.manualLow + r.manualHigh) / 2, dig((r.manualLow + r.manualHigh) / 2))}{unit(r.unit)}</td>
-                              <td className="num mono">{fmt((r.toolLow + r.toolHigh) / 2, dig((r.toolLow + r.toolHigh) / 2))}{unit(r.unit)}</td>
-                              <td className="num mono">{hours(r.monthMid)}</td>
-                            </tr>
-                          )),
-                          <tr key={t + "-total"} className="sum">
-                            <td colSpan={3}>{t}: total</td>
-                            <td colSpan={3}>{lvl && <>Quality protection <span className={`lvl ${lvl}`}>{lvl}</span></>}</td>
-                            <td className="num mono">{hours(tt)}</td>
-                          </tr>,
-                        ];
-                      })}
-                    </tbody>
-                  </table>
+                <div className="toollist">
+                  {tools.map((tl) => {
+                    const ts = rs.filter((r) => r.tool === tl);
+                    const tt = ts.reduce((a, r) => a + r.monthMid, 0);
+                    const lvl = levelOf(tl);
+                    return (
+                      <details key={tl} className="subtool">
+                        <summary>
+                          <span className="tname">{tl}</span>
+                          <span className="mono muted">{ts.length} function{ts.length > 1 ? "s" : ""}</span>
+                          {lvl ? <span className={`lvl ${lvl}`}>{lvl}</span> : <span />}
+                          <span className="mono strong">{hours(tt)} h saved</span>
+                        </summary>
+                        <div className="tablewrap">
+                          <table className="simple">
+                            <thead>
+                              <tr><th>Function</th><th>What it replaces</th><th className="num">Uses per month</th><th className="num">manually</th><th className="num">automatically</th><th className="num">Saved (h)</th></tr>
+                            </thead>
+                            <tbody>
+                              {ts.map((r) => (
+                                <tr key={r.id} className={r.released ? "" : "unreleased"}>
+                                  <td>{r.fn}{!r.released && <> <span className="tag">unreleased</span></>}</td>
+                                  <td className="basis">{r.basis}</td>
+                                  <td className="num mono">{fmt(r.usesEff, 1)}</td>
+                                  <td className="num mono">{fmt((r.manualLow + r.manualHigh) / 2, dig((r.manualLow + r.manualHigh) / 2))}{unit(r.unit)}</td>
+                                  <td className="num mono">{fmt((r.toolLow + r.toolHigh) / 2, dig((r.toolLow + r.toolHigh) / 2))}{unit(r.unit)}</td>
+                                  <td className="num mono">{hours(r.monthMid)}</td>
+                                </tr>
+                              ))}
+                              <tr className="sum"><td colSpan={5}>{tl}: total</td><td className="num mono">{hours(tt)}</td></tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </details>
+                    );
+                  })}
                 </div>
               </details>
             );
@@ -576,7 +581,7 @@ function SimpleView({ rows, total, fte, bySet, levelOf }: { rows: Calc[]; total:
           <div className="grand row-between"><strong>Total, all tools, per month</strong><strong className="mono">{hours(total)} h</strong></div>
         </div>
       </div>
-      <p className="note">Planning estimates, not measurements. Click an application to see its tools and functions. "More detail" opens the slicers and ranges.</p>
+      <p className="note">Planning estimates, not measurements. Click an application to see its tools, then a tool to see its functions. "More detail" opens the slicers and ranges.</p>
     </div>
   );
 }
