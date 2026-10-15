@@ -105,3 +105,9 @@ table.simple td, table.simple th { vertical-align: top; }
 table.simple th:nth-child(3), table.simple td.basis { min-width: 260px; }
 table.simple th:nth-child(2), table.simple td:nth-child(2) { min-width: 200px; }
 table.simple th:nth-child(1), table.simple td:nth-child(1) { min-width: 130px; }
+
+table.fn td { vertical-align: middle; }
+tr.detail td { background: var(--bg); padding: 12px 14px; }
+.dgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px 20px; font-size: 12px; }
+.dgrid .k { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 2px; }
+.dgrid .wide { grid-column: 1 / -1; }

@@ -37,6 +37,7 @@ export default function App() {
   const [overrides, setOverrides] = useState<Record<number, number>>(() => load("obmi-ts-overrides", {}));
   const [qScores, setQScores] = useState<Record<string, number[]>>(() => load("obmi-ts-quality", {}));
   const [qDim, setQDim] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<number[]>([]);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({ key: "monthMid", dir: -1 });
 
@@ -322,54 +323,68 @@ export default function App() {
           <div className="panel">
             <div className="row-between">
               <h3>Functions ({fmt(rows.length)})</h3>
-              <span className="note" style={{ padding: 0 }}>Edit "Uses / month" to test a what-if. Click a header to sort.</span>
+              <span className="note" style={{ padding: 0 }}>Edit "Uses / month" to test a what-if. Click Details for the rest.</span>
             </div>
             <div className="tablewrap">
-              <table>
+              <table className="fn">
                 <thead>
                   <tr>
                     {([
-                      ["set", "Set", ""], ["tool", "Tool", ""], ["fn", "Function", ""], ["unit", "Unit", ""],
-                      ["uses", "Uses / month", "num"], ["perUseMid", "Saved / use (h)", "num"],
-                      ["monthLow", "Low", "num"], ["monthMid", "Mid", "num"], ["monthHigh", "High", "num"],
+                      ["tool", "Tool", ""], ["fn", "Function", ""],
+                      ["uses", "Uses / month", "num"], ["monthMid", "Saved (h)", "num"],
                     ] as [SortKey, string, string][]).map(([k, l, c]) => (
                       <th key={k} className={c} onClick={() => setSortKey(k)}>
                         {l}{sort.key === k ? (sort.dir === 1 ? " ▲" : " ▼") : ""}
                       </th>
                     ))}
-                    <th>What it replaces</th>
+                    <th />
                   </tr>
                 </thead>
                 <tbody>
-                  {sorted.map((r) => (
-                    <tr key={r.id} className={r.released ? "" : "unreleased"}>
-                      <td><span className="dot" style={{ background: SET_COLOR[r.set], marginRight: 6 }} />{r.set}</td>
-                      <td>{r.tool}{!r.released && <> <span className="tag">unreleased</span></>}</td>
-                      <td>{r.fn}</td>
-                      <td>{r.unit}</td>
-                      <td className="num">
-                        <input
-                          type="number" min={0} step={1}
-                          className={overrides[r.id] !== undefined ? "edited" : ""}
-                          value={Number((r.usesEff / scale).toFixed(2))}
-                          onChange={(e) => {
-                            const n = Number(e.target.value);
-                            setOverrides((o) => {
-                              const next = { ...o };
-                              if (Number.isFinite(n) && n >= 0 && n !== ROWS.find((x) => x.id === r.id)!.uses) next[r.id] = n;
-                              else delete next[r.id];
-                              return next;
-                            });
-                          }}
-                        />
-                      </td>
-                      <td className="num mono">{fmt(r.perUseMid, 2)}</td>
-                      <td className="num mono">{hours(r.monthLow)}</td>
-                      <td className="num mono">{hours(r.monthMid)}</td>
-                      <td className="num mono">{hours(r.monthHigh)}</td>
-                      <td className="basis">{r.basis}</td>
-                    </tr>
-                  ))}
+                  {sorted.map((r) => {
+                    const isOpen = expanded.includes(r.id);
+                    return [
+                      <tr key={r.id} className={r.released ? "" : "unreleased"}>
+                        <td><span className="dot" style={{ background: SET_COLOR[r.set], marginRight: 6 }} />{r.tool}{!r.released && <> <span className="tag">unreleased</span></>}</td>
+                        <td>{r.fn}</td>
+                        <td className="num">
+                          <input
+                            type="number" min={0} step={1}
+                            className={overrides[r.id] !== undefined ? "edited" : ""}
+                            value={Number(((overrides[r.id] ?? ROWS.find((x) => x.id === r.id)!.uses) * scale).toFixed(2))}
+                            onChange={(e) => {
+                              const n = Number(e.target.value) / scale;
+                              setOverrides((o) => {
+                                const next = { ...o };
+                                if (Number.isFinite(n) && n >= 0 && Math.abs(n - ROWS.find((x) => x.id === r.id)!.uses) > 1e-9) next[r.id] = n;
+                                else delete next[r.id];
+                                return next;
+                              });
+                            }}
+                          />
+                        </td>
+                        <td className="num mono">{hours(r.monthMid)}</td>
+                        <td className="num">
+                          <button className="btn" aria-expanded={isOpen} onClick={() => setExpanded((e) => (isOpen ? e.filter((x) => x !== r.id) : [...e, r.id]))}>
+                            {isOpen ? "Hide" : "Details"}
+                          </button>
+                        </td>
+                      </tr>,
+                      isOpen && (
+                        <tr key={r.id + "-d"} className="detail">
+                          <td colSpan={5}>
+                            <div className="dgrid">
+                              <div><span className="k">Application</span>{r.set}</div>
+                              <div><span className="k">Unit of use</span>{r.unit}</div>
+                              <div><span className="k">Saved per use</span>{fmt(r.perUseMid, 2)} h</div>
+                              <div><span className="k">Range per month</span>{hours(r.monthLow)} to {hours(r.monthHigh)} h</div>
+                              <div className="wide"><span className="k">What it replaces</span>{r.basis}</div>
+                            </div>
+                          </td>
+                        </tr>
+                      ),
+                    ];
+                  })}
                 </tbody>
               </table>
               {rows.length === 0 && <div className="empty">No functions match the current slicers.</div>}
