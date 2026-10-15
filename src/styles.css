@@ -83,3 +83,11 @@ footer { color: var(--muted); font-size: 12px; margin-top: 24px; line-height: 1.
 .qcell.q1 { background: color-mix(in srgb, var(--c-gold) 22%, var(--bg)); }
 .qcell.q2 { background: color-mix(in srgb, var(--c-gold) 50%, var(--bg)); }
 .qcell.q3 { background: color-mix(in srgb, var(--c-gold) 80%, var(--bg)); color: #15171c; font-weight: 600; }
+
+details.tool { border-bottom: 1px solid var(--border); }
+details.tool summary { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 12px; align-items: center; padding: 9px 0; cursor: pointer; list-style: none; }
+details.tool summary::-webkit-details-marker { display: none; }
+details.tool .strong { color: var(--c-gold); min-width: 90px; text-align: right; }
+table.simple { margin: 0 0 10px 22px; width: calc(100% - 22px); }
+table.simple tr.sum td { font-weight: 600; background: var(--bg); }
+.grand { padding: 12px 8px; margin-top: 8px; background: var(--raised); border: 1px solid var(--c-gold); border-radius: var(--radius); }

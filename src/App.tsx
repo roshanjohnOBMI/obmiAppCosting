@@ -27,6 +27,7 @@ function save(key: string, value: unknown) {
 }
 
 export default function App() {
+  const [detail, setDetail] = useState<boolean>(() => load("obmi-ts-detail", false));
   const [theme, setTheme] = useState<"dark" | "light">(() => load("obmi-ts-theme", "dark"));
   const [sel, setSel] = useState<Sel>(EMPTY);
   const [releasedOnly, setReleasedOnly] = useState(true);
@@ -43,6 +44,7 @@ export default function App() {
     document.documentElement.dataset.theme = theme;
     save("obmi-ts-theme", theme);
   }, [theme]);
+  useEffect(() => save("obmi-ts-detail", detail), [detail]);
   useEffect(() => save("obmi-ts-scale", scale), [scale]);
   useEffect(() => save("obmi-ts-rep2", rp), [rp]);
   useEffect(() => save("obmi-ts-overrides", overrides), [overrides]);
@@ -157,16 +159,20 @@ export default function App() {
       <header className="top">
         <img src={theme === "dark" ? wordmarkLight : wordmarkDark} alt="OBMI" />
         <h1>Time-saved explorer</h1>
+        <button className="btn primary" onClick={() => setDetail(!detail)}>{detail ? "Simple view" : "More detail"}</button>
         <button className="btn" onClick={exportCsv}>Export CSV</button>
         <button className="btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme">
           {theme === "dark" ? "Light" : "Dark"}
         </button>
       </header>
       <p className="note">
-        Planning estimates, not measurements. Reference project: {REFERENCE} Hours are per month; low and high bound the range, mid is the average. Data as of {GENERATED}.
+        {detail
+          ? <>Planning estimates, not measurements. Reference project: {REFERENCE} Hours are per month; low and high bound the range, mid is the average. Data as of {GENERATED}.</>
+          : <>Estimated hours saved per month across the OBMI tools, for about 200 models and 20+ disciplines. Planning estimates, not measurements.</>}
       </p>
 
-      <div className="layout">
+      {!detail && <SimpleView rows={rows} total={total.mid} fte={fte} bySet={bySet} />}
+      {detail && (<div className="layout">
         <aside>
           <div className="panel">
             <div className="row-between">
@@ -408,7 +414,7 @@ export default function App() {
             Unreleased functions carry no uses until they ship. Overlap between tools is not netted out, so treat the total as an upper planning figure.
           </footer>
         </main>
-      </div>
+      </div>)}
     </div>
   );
 }
@@ -448,6 +454,63 @@ function Donut({ data, total, selected, onPick }: { data: { name: string; mid: n
           </button>
         ))}
       </div>
+    </div>
+  );
+}
+
+function SimpleView({ rows, total, fte, bySet }: { rows: Calc[]; total: number; fte: number; bySet: { name: string; mid: number }[] }) {
+  const sets = SET_ORDER.filter((s) => rows.some((r) => r.set === s));
+  const unit = (u: string) => "/" + u.replace(/\(.*?\)/g, "").replace(/^per\s+/, "").trim();
+  return (
+    <div>
+      <div className="kpis">
+        <div className="kpi hero"><div className="v">{hours(total)}</div><div className="l">Hours saved per month</div></div>
+        <div className="kpi"><div className="v">{fmt(fte, 1)}</div><div className="l">Full-time equivalents</div></div>
+      </div>
+      <div className="charts">
+        <div className="panel">
+          <h3>By application</h3>
+          <Donut data={bySet} total={total} selected={[]} onPick={() => undefined} />
+        </div>
+        <div className="panel">
+          <h3>Per tool, hours saved per month</h3>
+          {sets.map((st) => {
+            const tools = [...new Set(rows.filter((r) => r.set === st).map((r) => r.tool))];
+            return tools.map((t) => {
+              const rs = rows.filter((r) => r.set === st && r.tool === t);
+              const tot = rs.reduce((a, r) => a + r.monthMid, 0);
+              const man = rs.reduce((a, r) => a + ((r.manualLow + r.manualHigh) / 2) * r.usesEff, 0);
+              return (
+                <details key={st + t} className="tool">
+                  <summary>
+                    <span className="dot" style={{ background: SET_COLOR[st] }} />
+                    <span className="tname">{t}</span>
+                    <span className="mono">{hours(man)} h by hand</span>
+                    <span className="mono strong">{hours(tot)} h saved</span>
+                  </summary>
+                  <table className="simple">
+                    <thead><tr><th>Function</th><th className="num">Uses per month</th><th className="num">manually</th><th className="num">automatically</th><th className="num">Saved (h)</th></tr></thead>
+                    <tbody>
+                      {rs.map((r) => (
+                        <tr key={r.id}>
+                          <td>{r.fn}</td>
+                          <td className="num mono">{fmt(r.usesEff, 1)}</td>
+                          <td className="num mono">{fmt((r.manualLow + r.manualHigh) / 2, 2)}{unit(r.unit)}</td>
+                          <td className="num mono">{fmt((r.toolLow + r.toolHigh) / 2, 2)}{unit(r.unit)}</td>
+                          <td className="num mono">{hours(r.monthMid)}</td>
+                        </tr>
+                      ))}
+                      <tr className="sum"><td colSpan={4}>{t}: total</td><td className="num mono">{hours(tot)}</td></tr>
+                    </tbody>
+                  </table>
+                </details>
+              );
+            });
+          })}
+          <div className="grand row-between"><strong>Total, all tools, per month</strong><strong className="mono">{hours(total)} h</strong></div>
+        </div>
+      </div>
+      <p className="note">Planning estimates, not measurements. Click a tool to see its functions. "More detail" opens the slicers, ranges and quality board.</p>
     </div>
   );
 }
