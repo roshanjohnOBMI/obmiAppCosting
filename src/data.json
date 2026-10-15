@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-15",
- "reference": "About 200 models across 20+ disciplines; a Navisworks federation of 100-115 models per weekly cycle; ~10,000 TIDP/MIDP deliverables per MIDP issue (2-3 working days by hand); 50 add-in users (team size not confirmed).",
+ "reference": "About 200 models across 20+ disciplines; a Navisworks federation of 100-115 models per weekly cycle; ~10,000 TIDP/MIDP deliverables per MIDP issue (2-3 working days by hand); 50 add-in users (team size not confirmed); the routine final model health check is run online with the ACC Model Health Check app, so the Revit add-in version carries no monthly uses.",
  "rows": [
   {
    "id": 1,
@@ -442,7 +442,7 @@
    "toolHigh": 0.02,
    "savedLow": 0.08,
    "savedHigh": 0.19,
-   "uses": 200
+   "uses": 0
   },
   {
    "id": 27,
@@ -459,7 +459,7 @@
    "toolHigh": 0.2,
    "savedLow": 0.3,
    "savedHigh": 0.9,
-   "uses": 4
+   "uses": 0
   },
   {
    "id": 28,
@@ -476,7 +476,7 @@
    "toolHigh": 0.15,
    "savedLow": 1.05,
    "savedHigh": 1.72,
-   "uses": 200
+   "uses": 0
   },
   {
    "id": 29,
@@ -493,7 +493,7 @@
    "toolHigh": 0.1,
    "savedLow": 0.2,
    "savedHigh": 0.55,
-   "uses": 200
+   "uses": 0
   },
   {
    "id": 30,
@@ -510,7 +510,7 @@
    "toolHigh": 0.02,
    "savedLow": 0.28,
    "savedHigh": 0.49,
-   "uses": 200
+   "uses": 0
   },
   {
    "id": 31,
