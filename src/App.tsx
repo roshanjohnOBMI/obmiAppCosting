@@ -125,6 +125,30 @@ export default function App() {
   const setSortKey = (key: SortKey) =>
     setSort((s) => (s.key === key ? { key, dir: (s.dir * -1) as 1 | -1 } : { key, dir: key === "set" || key === "tool" || key === "fn" || key === "unit" ? 1 : -1 }));
 
+  const nEdits = Object.keys(overrides).length + Object.keys(qScores).length;
+  const setupLines = [
+    `View: ${detail ? "More detail" : "Simple"}`,
+    `Status: ${releasedOnly ? "Released tools only" : "Including unreleased"}`,
+    ...DIMS.filter(({ key }) => sel[key].length).map(({ key, label }) => `${label}: ${sel[key].join(", ")}`),
+    query ? `Search: ${query}` : "",
+    `Usage scale: ${fmt(scale * 100)}%`,
+    `Reporting runs: ${rp.projects} projects x ${rp.min} to ${rp.max} runs a week`,
+    nEdits > 0 ? `${nEdits} edited value${nEdits > 1 ? "s" : ""} (uses per month or quality ratings)` : "",
+  ].filter(Boolean);
+
+  const exportPdf = () => {
+    const opened: HTMLDetailsElement[] = [];
+    document.querySelectorAll("details").forEach((d) => {
+      if (!d.open) { d.open = true; opened.push(d); }
+    });
+    const restore = () => {
+      opened.forEach((d) => (d.open = false));
+      window.removeEventListener("afterprint", restore);
+    };
+    window.addEventListener("afterprint", restore);
+    window.print();
+  };
+
   const exportCsv = () => {
     const head = ["Application set", "Tool", "Function", "Unit of use", "Released", "Uses per month", "Saved per use low (h)", "Saved per use high (h)", "Monthly low (h)", "Monthly mid (h)", "Monthly high (h)", "What it replaces"];
     const q = (v: string | number | boolean) => `"${String(v).replace(/"/g, '""')}"`;
@@ -157,11 +181,17 @@ export default function App() {
 
   return (
     <div className="app">
+      <div className="print-only">
+        <strong>OBMI time-saved estimate</strong> · {GENERATED}
+        <ul>{setupLines.map((l) => <li key={l}>{l}</li>)}</ul>
+      </div>
       <header className="top">
-        <img src={theme === "dark" ? wordmarkLight : wordmarkDark} alt="OBMI" />
+        <img className="wm-screen" src={theme === "dark" ? wordmarkLight : wordmarkDark} alt="OBMI" />
+        <img className="wm-print" src={wordmarkDark} alt="OBMI" />
         <h1>Time-saved explorer</h1>
         <button className="btn primary" onClick={() => setDetail(!detail)}>{detail ? "Simple view" : "More detail"}</button>
-        <button className="btn" onClick={exportCsv}>Export CSV</button>
+        <button className="btn" onClick={exportCsv}>Export Excel / CSV</button>
+        <button className="btn" onClick={exportPdf}>Export PDF</button>
         <button className="btn" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle theme">
           {theme === "dark" ? "Light" : "Dark"}
         </button>
