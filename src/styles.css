@@ -141,8 +141,8 @@ tr.detail > td > table.inner th { position: static; background: transparent; }
 details.subtool { border-bottom: 1px solid var(--border); }
 details.subtool summary { display: grid; grid-template-columns: 14px 1fr auto 70px 110px; gap: 10px; align-items: center; padding: 8px 0; cursor: pointer; list-style: none; font-size: 13px; }
 details.subtool summary::-webkit-details-marker { display: none; }
-details.subtool summary::before { content: "B8"; color: var(--muted); }
-details.subtool[open] summary::before { content: "BE"; }
+details.subtool summary::before { content: "+"; color: var(--muted); font-weight: 600; }
+details.subtool[open] summary::before { content: "2"; }
 details.subtool .strong { color: var(--c-gold); text-align: right; }
 .muted { color: var(--muted); font-size: 11px; }
 details.subtool table.simple { margin-left: 0; width: 100%; }
