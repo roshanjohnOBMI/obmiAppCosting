@@ -66,12 +66,14 @@ export interface Calc extends Row {
 /** Weekly reporting tools: Meridian, Clash Analyser, Clash Approval and the Parameter Checker (missing parameters). */
 export const isReporting = (r: Row) => r.set === "Meridian" || ["Clash Analyser", "Clash Approval", "Parameter Checker"].includes(r.tool);
 
-export function compute(rows: Row[], overrides: Record<number, number>, scale: number, reportMult = 1): Calc[] {
+export function compute(rows: Row[], overrides: Record<number, number>, scale: number, rep = { low: 1, mid: 1, high: 1 }): Calc[] {
   return rows.map((r) => {
-    const usesEff = (overrides[r.id] ?? r.uses) * scale * (isReporting(r) ? reportMult : 1);
+    const base = (overrides[r.id] ?? r.uses) * scale;
+    const f = isReporting(r) ? rep : { low: 1, mid: 1, high: 1 };
+    const usesEff = base * f.mid;
     const perUseMid = (r.savedLow + r.savedHigh) / 2;
-    const monthLow = r.savedLow * usesEff;
-    const monthHigh = r.savedHigh * usesEff;
+    const monthLow = r.savedLow * base * f.low;
+    const monthHigh = r.savedHigh * base * f.high;
     const monthMid = perUseMid * usesEff;
     return { ...r, usesEff, perUseMid, monthLow, monthHigh, monthMid, band: bandOf(monthMid) };
   });

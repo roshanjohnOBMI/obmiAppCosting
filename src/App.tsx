@@ -30,7 +30,8 @@ export default function App() {
   const [theme, setTheme] = useState<"dark" | "light">(() => load("obmi-ts-theme", "dark"));
   const [sel, setSel] = useState<Sel>(EMPTY);
   const [releasedOnly, setReleasedOnly] = useState(true);
-  const [reportMult, setReportMult] = useState<number>(() => load("obmi-ts-report", 1));
+  const [rp, setRp] = useState<{ projects: number; min: number; max: number }>(() => load("obmi-ts-rep2", { projects: 2, min: 2, max: 4 }));
+  const rep = { low: rp.projects * rp.min, mid: (rp.projects * (rp.min + rp.max)) / 2, high: rp.projects * rp.max };
   const [scale, setScale] = useState<number>(() => load("obmi-ts-scale", 1));
   const [overrides, setOverrides] = useState<Record<number, number>>(() => load("obmi-ts-overrides", {}));
   const [qScores, setQScores] = useState<Record<string, number[]>>(() => load("obmi-ts-quality", {}));
@@ -43,11 +44,11 @@ export default function App() {
     save("obmi-ts-theme", theme);
   }, [theme]);
   useEffect(() => save("obmi-ts-scale", scale), [scale]);
-  useEffect(() => save("obmi-ts-report", reportMult), [reportMult]);
+  useEffect(() => save("obmi-ts-rep2", rp), [rp]);
   useEffect(() => save("obmi-ts-overrides", overrides), [overrides]);
   useEffect(() => save("obmi-ts-quality", qScores), [qScores]);
 
-  const all = useMemo(() => compute(ROWS, overrides, scale, reportMult), [overrides, scale, reportMult]);
+  const all = useMemo(() => compute(ROWS, overrides, scale, rep), [overrides, scale, rp]);
 
   const matches = (r: Calc, skip?: Dim) =>
     (!releasedOnly || r.released) &&
@@ -200,12 +201,23 @@ export default function App() {
           ))}
           <div className="panel">
             <div className="row-between">
-              <h3>Reporting runs a week</h3>
-              <span className="mono">{fmt(reportMult, 1)}x</span>
+              <h3>Reporting runs</h3>
+              <span className="mono">{rep.low}–{rep.high} / wk</span>
             </div>
-            <input type="range" min={1} max={10} step={0.5} value={reportMult} onChange={(e) => setReportMult(Number(e.target.value))} />
+            <div className="row-between" style={{ gap: 8 }}>
+              {([["projects", "Projects"], ["min", "Runs/wk min"], ["max", "Runs/wk max"]] as const).map(([k, l]) => (
+                <label key={k} style={{ fontSize: 11, color: "var(--muted)", flex: 1 }}>
+                  {l}
+                  <input type="number" min={1} max={20} step={1} value={rp[k]}
+                    onChange={(e) => {
+                      const v = Math.max(1, Number(e.target.value) || 1);
+                      setRp((o) => { const n = { ...o, [k]: v }; if (n.max < n.min) { if (k === "min") n.max = v; else n.min = v; } return n; });
+                    }} />
+                </label>
+              ))}
+            </div>
             <div className="note" style={{ padding: 0 }}>
-              Multiplies the weekly runs of Meridian, Clash Analyser, Clash Approval and the Parameter Checker (missing parameters), for more runs, projects or packages per week. 1x is one run each week.
+              Runs of Meridian, Clash Analyser, Clash Approval and the Parameter Checker (missing parameters): projects x runs a week per project. Low and high use the min and max; mid uses the average.
             </div>
           </div>
           <div className="panel">
