@@ -435,7 +435,7 @@ function SimpleView({ rows, total, fte, bySet, levelOf }: { rows: Calc[]; total:
         <div className="kpi hero"><div className="v">{hours(total)}</div><div className="l">Hours saved per month</div></div>
         <div className="kpi"><div className="v">{fmt(fte, 1)}</div><div className="l">Full-time equivalents</div></div>
       </div>
-      <div className="charts">
+      <div className="stack">
         <div className="panel">
           <h3>By application</h3>
           <Donut data={bySet} total={total} selected={[]} onPick={() => undefined} />
