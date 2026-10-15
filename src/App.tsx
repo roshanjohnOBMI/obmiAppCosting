@@ -497,7 +497,7 @@ function SimpleView({ rows, total, fte, bySet }: { rows: Calc[]; total: number; 
                           <td className="basis">{r.basis}</td>
                           <td className="num mono">{fmt(r.usesEff, 1)}</td>
                           <td className="num mono">{fmt((r.manualLow + r.manualHigh) / 2, 2)}{unit(r.unit)}</td>
-                          <td className="num mono">{fmt((r.toolLow + r.toolHigh) / 2, 2)}{unit(r.unit)}</td>
+                          <td className="num mono">{fmt((r.toolLow + r.toolHigh) / 2, (r.toolLow + r.toolHigh) / 2 < 0.01 && r.toolHigh > 0 ? 4 : 2)}{unit(r.unit)}</td>
                           <td className="num mono">{hours(r.monthMid)}</td>
                         </tr>
                       ))}
