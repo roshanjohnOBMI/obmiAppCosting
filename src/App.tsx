@@ -171,7 +171,12 @@ export default function App() {
           : <>Estimated hours saved per month across the OBMI tools, for about 200 models and 20+ disciplines. Planning estimates, not measurements.</>}
       </p>
 
-      {!detail && <SimpleView rows={rows} total={total.mid} fte={fte} bySet={bySet} />}
+      {!detail && <SimpleView rows={rows} total={total.mid} fte={fte} bySet={bySet} levelOf={(t: string) => {
+        const sc = (qScores[t] ?? QUALITY.find((q) => q.tool === t)?.scores ?? []) as number[];
+        if (sc.length === 0) return "";
+        const pct = (sc.reduce((a, b) => a + b, 0) / 15) * 100;
+        return pct >= 75 ? "High" : pct >= 50 ? "Medium" : "Basic";
+      }} />}
       {detail && (<div className="layout">
         <aside>
           <div className="panel">
@@ -420,9 +425,10 @@ function Donut({ data, total, selected, onPick }: { data: { name: string; mid: n
   );
 }
 
-function SimpleView({ rows, total, fte, bySet }: { rows: Calc[]; total: number; fte: number; bySet: { name: string; mid: number }[] }) {
+function SimpleView({ rows, total, fte, bySet, levelOf }: { rows: Calc[]; total: number; fte: number; bySet: { name: string; mid: number }[]; levelOf: (t: string) => string }) {
   const sets = SET_ORDER.filter((s) => rows.some((r) => r.set === s));
   const unit = (u: string) => "/" + u.replace(/\(.*?\)/g, "").replace(/^per\s+/, "").trim();
+  const dig = (n: number) => (n < 0.01 && n > 0 ? 4 : 2);
   return (
     <div>
       <div className="kpis">
@@ -435,45 +441,59 @@ function SimpleView({ rows, total, fte, bySet }: { rows: Calc[]; total: number; 
           <Donut data={bySet} total={total} selected={[]} onPick={() => undefined} />
         </div>
         <div className="panel">
-          <h3>Per tool, hours saved per month</h3>
+          <h3>Hours saved per month, by application</h3>
           {sets.map((st) => {
-            const tools = [...new Set(rows.filter((r) => r.set === st).map((r) => r.tool))];
-            return tools.map((t) => {
-              const rs = rows.filter((r) => r.set === st && r.tool === t);
-              const tot = rs.reduce((a, r) => a + r.monthMid, 0);
-              const man = rs.reduce((a, r) => a + ((r.manualLow + r.manualHigh) / 2) * r.usesEff, 0);
-              return (
-                <details key={st + t} className="tool">
-                  <summary>
-                    <span className="dot" style={{ background: SET_COLOR[st] }} />
-                    <span className="tname">{t}</span>
-                    <span className="mono">{hours(man)} h by hand</span>
-                    <span className="mono strong">{hours(tot)} h saved</span>
-                  </summary>
+            const rs = rows.filter((r) => r.set === st);
+            const tot = rs.reduce((a, r) => a + r.monthMid, 0);
+            const man = rs.reduce((a, r) => a + ((r.manualLow + r.manualHigh) / 2) * r.usesEff, 0);
+            const tools = [...new Set(rs.map((r) => r.tool))];
+            return (
+              <details key={st} className="tool">
+                <summary>
+                  <span className="dot" style={{ background: SET_COLOR[st] }} />
+                  <span className="tname">{st}</span>
+                  <span className="mono">{hours(man)} h by hand</span>
+                  <span className="mono strong">{hours(tot)} h saved</span>
+                </summary>
+                <div className="tablewrap">
                   <table className="simple">
-                    <thead><tr><th>Function</th><th>What it replaces</th><th className="num">Uses per month</th><th className="num">manually</th><th className="num">automatically</th><th className="num">Saved (h)</th></tr></thead>
+                    <thead>
+                      <tr><th>Tool</th><th>Function</th><th>What it replaces</th><th className="num">Uses per month</th><th className="num">manually</th><th className="num">automatically</th><th className="num">Saved (h)</th></tr>
+                    </thead>
                     <tbody>
-                      {rs.map((r) => (
-                        <tr key={r.id}>
-                          <td>{r.fn}</td>
-                          <td className="basis">{r.basis}</td>
-                          <td className="num mono">{fmt(r.usesEff, 1)}</td>
-                          <td className="num mono">{fmt((r.manualLow + r.manualHigh) / 2, 2)}{unit(r.unit)}</td>
-                          <td className="num mono">{fmt((r.toolLow + r.toolHigh) / 2, (r.toolLow + r.toolHigh) / 2 < 0.01 && r.toolHigh > 0 ? 4 : 2)}{unit(r.unit)}</td>
-                          <td className="num mono">{hours(r.monthMid)}</td>
-                        </tr>
-                      ))}
-                      <tr className="sum"><td colSpan={5}>{t}: total</td><td className="num mono">{hours(tot)}</td></tr>
+                      {tools.map((t) => {
+                        const ts = rs.filter((r) => r.tool === t);
+                        const tt = ts.reduce((a, r) => a + r.monthMid, 0);
+                        const lvl = levelOf(t);
+                        return [
+                          ...ts.map((r) => (
+                            <tr key={r.id} className={r.released ? "" : "unreleased"}>
+                              <td>{r.tool}{!r.released && <> <span className="tag">unreleased</span></>}</td>
+                              <td>{r.fn}</td>
+                              <td className="basis">{r.basis}</td>
+                              <td className="num mono">{fmt(r.usesEff, 1)}</td>
+                              <td className="num mono">{fmt((r.manualLow + r.manualHigh) / 2, dig((r.manualLow + r.manualHigh) / 2))}{unit(r.unit)}</td>
+                              <td className="num mono">{fmt((r.toolLow + r.toolHigh) / 2, dig((r.toolLow + r.toolHigh) / 2))}{unit(r.unit)}</td>
+                              <td className="num mono">{hours(r.monthMid)}</td>
+                            </tr>
+                          )),
+                          <tr key={t + "-total"} className="sum">
+                            <td colSpan={3}>{t}: total</td>
+                            <td colSpan={3}>{lvl && <>Quality protection <span className={`lvl ${lvl}`}>{lvl}</span></>}</td>
+                            <td className="num mono">{hours(tt)}</td>
+                          </tr>,
+                        ];
+                      })}
                     </tbody>
                   </table>
-                </details>
-              );
-            });
+                </div>
+              </details>
+            );
           })}
           <div className="grand row-between"><strong>Total, all tools, per month</strong><strong className="mono">{hours(total)} h</strong></div>
         </div>
       </div>
-      <p className="note">Planning estimates, not measurements. Click a tool to see its functions. "More detail" opens the slicers, ranges and quality board.</p>
+      <p className="note">Planning estimates, not measurements. Click an application to see its tools and functions. "More detail" opens the slicers and ranges.</p>
     </div>
   );
 }
