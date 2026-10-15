@@ -30,6 +30,7 @@ export default function App() {
   const [theme, setTheme] = useState<"dark" | "light">(() => load("obmi-ts-theme", "dark"));
   const [sel, setSel] = useState<Sel>(EMPTY);
   const [releasedOnly, setReleasedOnly] = useState(true);
+  const [reportMult, setReportMult] = useState<number>(() => load("obmi-ts-report", 1));
   const [scale, setScale] = useState<number>(() => load("obmi-ts-scale", 1));
   const [overrides, setOverrides] = useState<Record<number, number>>(() => load("obmi-ts-overrides", {}));
   const [qScores, setQScores] = useState<Record<string, number[]>>(() => load("obmi-ts-quality", {}));
@@ -42,10 +43,11 @@ export default function App() {
     save("obmi-ts-theme", theme);
   }, [theme]);
   useEffect(() => save("obmi-ts-scale", scale), [scale]);
+  useEffect(() => save("obmi-ts-report", reportMult), [reportMult]);
   useEffect(() => save("obmi-ts-overrides", overrides), [overrides]);
   useEffect(() => save("obmi-ts-quality", qScores), [qScores]);
 
-  const all = useMemo(() => compute(ROWS, overrides, scale), [overrides, scale]);
+  const all = useMemo(() => compute(ROWS, overrides, scale, reportMult), [overrides, scale, reportMult]);
 
   const matches = (r: Calc, skip?: Dim) =>
     (!releasedOnly || r.released) &&
@@ -196,6 +198,16 @@ export default function App() {
               </div>
             </div>
           ))}
+          <div className="panel">
+            <div className="row-between">
+              <h3>Reporting runs a week</h3>
+              <span className="mono">{fmt(reportMult, 1)}x</span>
+            </div>
+            <input type="range" min={1} max={10} step={0.5} value={reportMult} onChange={(e) => setReportMult(Number(e.target.value))} />
+            <div className="note" style={{ padding: 0 }}>
+              Multiplies the weekly runs of Meridian, Clash Analyser, Clash Approval and the Parameter Checker (missing parameters), for more runs, projects or packages per week. 1x is one run each week.
+            </div>
+          </div>
           <div className="panel">
             <div className="row-between">
               <h3>Usage scale</h3>

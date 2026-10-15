@@ -63,9 +63,12 @@ export interface Calc extends Row {
   band: string;
 }
 
-export function compute(rows: Row[], overrides: Record<number, number>, scale: number): Calc[] {
+/** Weekly reporting tools: Meridian, Clash Analyser, Clash Approval and the Parameter Checker (missing parameters). */
+export const isReporting = (r: Row) => r.set === "Meridian" || ["Clash Analyser", "Clash Approval", "Parameter Checker"].includes(r.tool);
+
+export function compute(rows: Row[], overrides: Record<number, number>, scale: number, reportMult = 1): Calc[] {
   return rows.map((r) => {
-    const usesEff = (overrides[r.id] ?? r.uses) * scale;
+    const usesEff = (overrides[r.id] ?? r.uses) * scale * (isReporting(r) ? reportMult : 1);
     const perUseMid = (r.savedLow + r.savedHigh) / 2;
     const monthLow = r.savedLow * usesEff;
     const monthHigh = r.savedHigh * usesEff;
