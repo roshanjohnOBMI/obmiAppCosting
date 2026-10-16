@@ -1050,11 +1050,11 @@
    "basis": "",
    "manualLow": 0.15,
    "manualHigh": 0.15,
-   "toolLow": 0.0001,
+   "toolLow": 0.0002,
    "toolHigh": 0.0002,
    "savedLow": 0.1498,
-   "savedHigh": 0.1499,
-   "uses": 200
+   "savedHigh": 0.1498,
+   "uses": 250
   },
   {
    "id": 63,
@@ -1064,14 +1064,14 @@
    "fn": "Run the checks",
    "unit": "per model",
    "released": true,
-   "basis": "Run the QA checklist in Revit and wait for it to finish.",
-   "manualLow": 0.5,
-   "manualHigh": 0.5,
-   "toolLow": 0.0004,
-   "toolHigh": 0.0006,
-   "savedLow": 0.4994,
-   "savedHigh": 0.4996,
-   "uses": 200
+   "basis": "Run the QA checklist in Revit and wait for it to finish. A model check takes about an hour in Revit; the web app returns every check, with its own score, in 2-3 seconds.",
+   "manualLow": 1.0,
+   "manualHigh": 1.0,
+   "toolLow": 0.0005,
+   "toolHigh": 0.0005,
+   "savedLow": 0.9995,
+   "savedHigh": 0.9995,
+   "uses": 250
   },
   {
    "id": 64,
@@ -1084,11 +1084,11 @@
    "basis": "Export the results and tidy them into a report.",
    "manualLow": 0.2,
    "manualHigh": 0.2,
-   "toolLow": 0,
-   "toolHigh": 0,
+   "toolLow": 0.0,
+   "toolHigh": 0.0,
    "savedLow": 0.2,
    "savedHigh": 0.2,
-   "uses": 200
+   "uses": 250
   },
   {
    "id": 65,
@@ -1101,11 +1101,11 @@
    "basis": "Upload the report to the right folder and tick the model off a list. The app saves each report as the model finishes.",
    "manualLow": 0.15,
    "manualHigh": 0.15,
-   "toolLow": 0,
-   "toolHigh": 0,
+   "toolLow": 0.0,
+   "toolHigh": 0.0,
    "savedLow": 0.15,
    "savedHigh": 0.15,
-   "uses": 200
+   "uses": 250
   },
   {
    "id": 66,
