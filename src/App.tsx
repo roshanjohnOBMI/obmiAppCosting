@@ -151,6 +151,12 @@ export default function App() {
     setSort((s) => (s.key === key ? { key, dir: (s.dir * -1) as 1 | -1 } : { key, dir: key === "set" || key === "tool" || key === "fn" || key === "unit" ? 1 : -1 }));
 
   const nEdits = Object.keys(overrides).length + Object.keys(qScores).length;
+  const levelOf = (t: string) => {
+    const sc = (qScores[t] ?? QUALITY.find((q) => q.tool === t)?.scores ?? []) as number[];
+    if (sc.length === 0) return "";
+    const pct = (sc.reduce((a, b) => a + b, 0) / 15) * 100;
+    return pct >= 75 ? "High" : pct >= 50 ? "Medium" : "Basic";
+  };
   const setupLines = [
     `View: ${detail ? "More detail" : "Simple"}`,
     `Status: ${releasedOnly ? "Released tools only" : "Including unreleased"}`,
@@ -352,30 +358,30 @@ export default function App() {
 
           <div className="panel" style={{ marginBottom: 14 }}>
             <h3>Quality: what each tool protects</h3>
-            <div className="tablewrap">
-              <table className="simple">
-                <thead>
-                  <tr><th>Tool</th><th>Quality failure it prevents</th><th>Quality protection</th></tr>
-                </thead>
-                <tbody>
-                  {qRows.map((q) => {
-                    const pct = (q.scores.reduce((a, b) => a + b, 0) / 15) * 100;
-                    const level = pct >= 75 ? "High" : pct >= 50 ? "Medium" : "Basic";
+            {SET_ORDER.filter((st) => qRows.some((q) => q.set === st)).map((st) => (
+              <section key={st} className="appsec">
+                <div className="apphead">
+                  <span className="dot" style={{ background: SET_COLOR[st] }} />
+                  <span className="tname">{st}</span>
+                  <span />
+                  <span />
+                </div>
+                <div className="toollist">
+                  {qRows.filter((q) => q.set === st).map((q) => {
+                    const lvl = levelOf(q.tool);
                     return (
-                      <tr key={q.tool}>
-                        <td><span className="dot" style={{ background: SET_COLOR[q.set], marginRight: 6 }} />{q.tool}</td>
-                        <td className="basis">{q.prevents}</td>
-                        <td><span className={`lvl ${level}`}>{level}</span></td>
-                      </tr>
+                      <div key={q.tool} className="qline">
+                        <span className="tname">{q.tool}</span>
+                        <span className="muted">{q.prevents}</span>
+                        <span className={`lvl ${lvl}`}>{lvl}</span>
+                      </div>
                     );
                   })}
-                </tbody>
-              </table>
-              {qRows.length === 0 && <div className="empty">No tools match the current slicers.</div>}
-            </div>
-            <div className="note" style={{ padding: "8px 0 0" }}>
-              Protection is a judgement, not a measurement.
-            </div>
+                </div>
+              </section>
+            ))}
+            {qRows.length === 0 && <div className="empty">No tools match the current slicers.</div>}
+            <div className="note" style={{ padding: "8px 0 0" }}>Protection is a judgement, not a measurement.</div>
           </div>
 
           <div className="panel">
@@ -383,96 +389,83 @@ export default function App() {
               <h3>Tools ({fmt(toolGroups.length)}) and their functions ({fmt(rows.length)})</h3>
               <span className="note" style={{ padding: 0 }}>Open a tool to see its functions. Edit "Uses / month" to test a what-if.</span>
             </div>
-            <div className="tablewrap">
-              <table className="fn">
-                <thead>
-                  <tr>
-                    <th onClick={() => setSortKey("tool")}>Tool{sort.key === "tool" ? (sort.dir === 1 ? " ▲" : " ▼") : ""}</th>
-                    <th className="num">Functions</th>
-                    <th className="num" onClick={() => setSortKey("monthMid")}>Saved (h){sort.key !== "tool" ? (sort.dir === 1 ? " ▲" : " ▼") : ""}</th>
-                    <th />
-                  </tr>
-                </thead>
-                <tbody>
-                  {setGroups.map((sg) => [
-                    <tr key={sg.set + "-h"} className="sethead">
-                      <td colSpan={2}><span className="dot" style={{ background: SET_COLOR[sg.set], marginRight: 8 }} />{sg.set}</td>
-                      <td className="num mono">{hours(sg.total)}</td>
-                      <td />
-                    </tr>,
-                    ...sg.groups.map((g) => {
-                    const open = openTools.includes(g.key);
-                    return [
-                      <tr key={g.key} className="toolrow">
-                        <td><span className="dot" style={{ background: SET_COLOR[g.set], marginRight: 6 }} /><strong>{g.tool}</strong></td>
-                        <td className="num mono">{g.rows.length}</td>
-                        <td className="num mono">{hours(g.total)}</td>
-                        <td className="num">
-                          <button className="btn" aria-expanded={open} onClick={() => setOpenTools((o) => (open ? o.filter((x) => x !== g.key) : [...o, g.key]))}>
-                            {open ? "Hide functions" : "Show functions"}
-                          </button>
-                        </td>
-                      </tr>,
-                      open && (
-                        <tr key={g.key + "-f"} className="detail">
-                          <td colSpan={4}>
-                            <table className="fn inner">
-                              <thead><tr><th>Function</th><th className="num">Uses / month</th><th className="num">Saved (h)</th><th /></tr></thead>
-                              <tbody>
-                                {g.rows.map((r) => {
-                                  const isOpen = expanded.includes(r.id);
-                                  return [
-                                    <tr key={r.id} className={r.released ? "" : "unreleased"}>
-                                      <td>{r.fn}{!r.released && <> <span className="tag">unreleased</span></>}</td>
-                                      <td className="num">
-                                        <input
-                                          type="number" min={0} step={1}
-                                          className={overrides[r.id] !== undefined ? "edited" : ""}
-                                          value={Number(((overrides[r.id] ?? ROWS.find((x) => x.id === r.id)!.uses) * scale).toFixed(2))}
-                                          onChange={(e) => {
-                                            const n = Number(e.target.value) / scale;
-                                            setOverrides((o) => {
-                                              const next = { ...o };
-                                              if (Number.isFinite(n) && n >= 0 && Math.abs(n - ROWS.find((x) => x.id === r.id)!.uses) > 1e-9) next[r.id] = n;
-                                              else delete next[r.id];
-                                              return next;
-                                            });
-                                          }}
-                                        />
+            {setGroups.map((sg) => (
+              <section key={sg.set} className="appsec">
+                <div className="apphead">
+                  <span className="dot" style={{ background: SET_COLOR[sg.set] }} />
+                  <span className="tname">{sg.set}</span>
+                  <span />
+                  <span className="mono strong">{hours(sg.total)} h saved</span>
+                </div>
+                <div className="toollist">
+                  {sg.groups.map((g) => {
+                    const lvl = levelOf(g.tool);
+                    return (
+                      <details key={g.key} className="subtool">
+                        <summary>
+                          <span className="tname">{g.tool}</span>
+                          <span className="mono muted">{g.rows.length} function{g.rows.length > 1 ? "s" : ""}</span>
+                          {lvl ? <span className={`lvl ${lvl}`}>{lvl}</span> : <span />}
+                          <span className="mono strong">{hours(g.total)} h saved</span>
+                        </summary>
+                        <div className="tablewrap">
+                          <table className="simple">
+                            <thead>
+                              <tr><th>Function</th><th className="num">Uses / month</th><th className="num">Saved (h)</th><th /></tr>
+                            </thead>
+                            <tbody>
+                              {g.rows.map((r) => {
+                                const isOpen = expanded.includes(r.id);
+                                return [
+                                  <tr key={r.id} className={r.released ? "" : "unreleased"}>
+                                    <td>{r.fn}{!r.released && <> <span className="tag">unreleased</span></>}</td>
+                                    <td className="num">
+                                      <input
+                                        type="number" min={0} step={1}
+                                        className={overrides[r.id] !== undefined ? "edited" : ""}
+                                        value={Number(((overrides[r.id] ?? ROWS.find((x) => x.id === r.id)!.uses) * scale).toFixed(2))}
+                                        onChange={(e) => {
+                                          const n = Number(e.target.value) / scale;
+                                          setOverrides((o) => {
+                                            const next = { ...o };
+                                            if (Number.isFinite(n) && n >= 0 && Math.abs(n - ROWS.find((x) => x.id === r.id)!.uses) > 1e-9) next[r.id] = n;
+                                            else delete next[r.id];
+                                            return next;
+                                          });
+                                        }}
+                                      />
+                                    </td>
+                                    <td className="num mono">{hours(r.monthMid)}</td>
+                                    <td className="num">
+                                      <button className="btn" aria-expanded={isOpen} onClick={() => setExpanded((e) => (isOpen ? e.filter((x) => x !== r.id) : [...e, r.id]))}>
+                                        {isOpen ? "Hide" : "Details"}
+                                      </button>
+                                    </td>
+                                  </tr>,
+                                  isOpen && (
+                                    <tr key={r.id + "-d"} className="detail">
+                                      <td colSpan={4}>
+                                        <div className="dgrid">
+                                          <div><span className="k">Unit of use</span>{r.unit}</div>
+                                          <div><span className="k">Saved per use</span>{fmt(r.perUseMid, 2)} h</div>
+                                          <div><span className="k">Range per month</span>{hours(r.monthLow)} to {hours(r.monthHigh)} h</div>
+                                          <div className="wide"><span className="k">What it replaces</span>{r.basis}</div>
+                                        </div>
                                       </td>
-                                      <td className="num mono">{hours(r.monthMid)}</td>
-                                      <td className="num">
-                                        <button className="btn" aria-expanded={isOpen} onClick={() => setExpanded((e) => (isOpen ? e.filter((x) => x !== r.id) : [...e, r.id]))}>
-                                          {isOpen ? "Hide" : "Details"}
-                                        </button>
-                                      </td>
-                                    </tr>,
-                                    isOpen && (
-                                      <tr key={r.id + "-d"} className="detail">
-                                        <td colSpan={4}>
-                                          <div className="dgrid">
-                                            <div><span className="k">Unit of use</span>{r.unit}</div>
-                                            <div><span className="k">Saved per use</span>{fmt(r.perUseMid, 2)} h</div>
-                                            <div><span className="k">Range per month</span>{hours(r.monthLow)} to {hours(r.monthHigh)} h</div>
-                                            <div className="wide"><span className="k">What it replaces</span>{r.basis}</div>
-                                          </div>
-                                        </td>
-                                      </tr>
-                                    ),
-                                  ];
-                                })}
-                              </tbody>
-                            </table>
-                          </td>
-                        </tr>
-                      ),
-                    ];
-                  }),
-                  ])}
-                </tbody>
-              </table>
-              {rows.length === 0 && <div className="empty">No functions match the current slicers.</div>}
-            </div>
+                                    </tr>
+                                  ),
+                                ];
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </details>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+            {rows.length === 0 && <div className="empty">No functions match the current slicers.</div>}
           </div>
 
           <footer>
