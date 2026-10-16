@@ -27,7 +27,7 @@ function save(key: string, value: unknown) {
 }
 
 export default function App() {
-  const [detail, setDetail] = useState<boolean>(() => load("obmi-ts-detail", false));
+  const [detail, setDetail] = useState<boolean>(false);
   const [theme, setTheme] = useState<"dark" | "light">(() => load("obmi-ts-theme", "dark"));
   const [sel, setSel] = useState<Sel>(EMPTY);
   const [releasedOnly, setReleasedOnly] = useState(true);
@@ -46,7 +46,6 @@ export default function App() {
     document.documentElement.dataset.theme = theme;
     save("obmi-ts-theme", theme);
   }, [theme]);
-  useEffect(() => save("obmi-ts-detail", detail), [detail]);
   useEffect(() => save("obmi-ts-scale", scale), [scale]);
   useEffect(() => save("obmi-ts-rep2", rp), [rp]);
   useEffect(() => save("obmi-ts-overrides", overrides), [overrides]);
