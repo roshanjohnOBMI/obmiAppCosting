@@ -220,7 +220,7 @@ export default function App() {
       </div>
       <header className="top">
         <img className="wm-screen" src={theme === "dark" ? wordmarkLight : wordmarkDark} alt="OBMI" />
-        <img className="wm-print" src={wordmarkDark} alt="OBMI" />
+        <img className="wm-print" src={wordmarkLight} alt="OBMI" />
         <h1>Time-saved explorer</h1>
         <button className="btn primary" onClick={() => setDetail(!detail)}>{detail ? "Simple view" : "More detail"}</button>
         <button className="btn" onClick={exportCsv}>Export Excel / CSV</button>
