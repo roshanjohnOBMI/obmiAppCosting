@@ -146,3 +146,6 @@ details.subtool[open] summary::before { content: "-"; }
 details.subtool .strong { color: var(--c-gold); text-align: right; }
 .muted { color: var(--muted); font-size: 11px; }
 details.subtool table.simple { margin-left: 0; width: 100%; }
+
+tr.sethead td { background: var(--raised); font-family: "Archivo", "Montserrat", sans-serif; letter-spacing: .08em; text-transform: uppercase; font-size: 12px; padding: 10px 8px; border-top: 1px solid var(--border); }
+tr.toolrow td:first-child { padding-left: 22px; }

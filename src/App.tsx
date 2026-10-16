@@ -138,6 +138,15 @@ export default function App() {
     return arr;
   }, [sorted, sort]);
 
+  const setGroups = useMemo(
+    () =>
+      SET_ORDER.map((set) => {
+        const groups = toolGroups.filter((g) => g.set === set);
+        return { set, groups, total: groups.reduce((a, g) => a + g.total, 0) };
+      }).filter((x) => x.groups.length > 0),
+    [toolGroups],
+  );
+
   const setSortKey = (key: SortKey) =>
     setSort((s) => (s.key === key ? { key, dir: (s.dir * -1) as 1 | -1 } : { key, dir: key === "set" || key === "tool" || key === "fn" || key === "unit" ? 1 : -1 }));
 
@@ -385,11 +394,17 @@ export default function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {toolGroups.map((g) => {
+                  {setGroups.map((sg) => [
+                    <tr key={sg.set + "-h"} className="sethead">
+                      <td colSpan={2}><span className="dot" style={{ background: SET_COLOR[sg.set], marginRight: 8 }} />{sg.set}</td>
+                      <td className="num mono">{hours(sg.total)}</td>
+                      <td />
+                    </tr>,
+                    ...sg.groups.map((g) => {
                     const open = openTools.includes(g.key);
                     return [
                       <tr key={g.key} className="toolrow">
-                        <td><span className="dot" style={{ background: SET_COLOR[g.set], marginRight: 6 }} /><strong>{g.tool}</strong> <span className="tag">{g.set}</span></td>
+                        <td><span className="dot" style={{ background: SET_COLOR[g.set], marginRight: 6 }} /><strong>{g.tool}</strong></td>
                         <td className="num mono">{g.rows.length}</td>
                         <td className="num mono">{hours(g.total)}</td>
                         <td className="num">
@@ -452,7 +467,8 @@ export default function App() {
                         </tr>
                       ),
                     ];
-                  })}
+                  }),
+                  ])}
                 </tbody>
               </table>
               {rows.length === 0 && <div className="empty">No functions match the current slicers.</div>}
