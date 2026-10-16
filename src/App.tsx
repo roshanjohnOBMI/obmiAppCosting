@@ -547,13 +547,13 @@ function SimpleView({ rows, total, fte, bySet, levelOf }: { rows: Calc[]; total:
             const man = rs.reduce((a, r) => a + ((r.manualLow + r.manualHigh) / 2) * r.usesEff, 0);
             const tools = [...new Set(rs.map((r) => r.tool))];
             return (
-              <section key={st} className="appsec">
-                <div className="apphead">
+              <details key={st} className="tool">
+                <summary>
                   <span className="dot" style={{ background: SET_COLOR[st] }} />
                   <span className="tname">{st}</span>
                   <span className="mono">{hours(man)} h by hand</span>
                   <span className="mono strong">{hours(tot)} h saved</span>
-                </div>
+                </summary>
                 <div className="toollist">
                   {tools.map((tl) => {
                     const ts = rs.filter((r) => r.tool === tl);
@@ -591,13 +591,13 @@ function SimpleView({ rows, total, fte, bySet, levelOf }: { rows: Calc[]; total:
                     );
                   })}
                 </div>
-              </section>
+              </details>
             );
           })}
           <div className="grand row-between"><strong>Total, all tools, per month</strong><strong className="mono">{hours(total)} h</strong></div>
         </div>
       </div>
-      <p className="note">Planning estimates, not measurements. Click a tool to see its functions. "More detail" opens the slicers and ranges.</p>
+      <p className="note">Planning estimates, not measurements. Click an application to see its tools, then a tool to see its functions. "More detail" opens the slicers and ranges.</p>
     </div>
   );
 }
